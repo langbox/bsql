@@ -1,6 +1,7 @@
-package sqrl
+package bsql
 
 import (
+	"fmt"
 	"testing"
 
 	"bytes"
@@ -53,4 +54,13 @@ func TestWherePartMap(t *testing.T) {
 	m := map[string]interface{}{"x": 1, "y": 2}
 	test(m)
 	test(Eq(m))
+}
+
+func TestWhere(t *testing.T) {
+	pred := map[string]interface{}{
+		"id":   []int64{1, 2, 4},
+		"name": nil,
+	}
+	query, args, err := Eq(pred).ToSql()
+	fmt.Printf("query:%s, args:%v, err:%v", query, args, err)
 }

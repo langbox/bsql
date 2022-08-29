@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/elgris/sqrl"
-	"github.com/elgris/sqrl/pg"
+	"github.com/langbox/bsql"
+	"github.com/langbox/bsql/pg"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,7 +26,7 @@ func TestValidJSON(t *testing.T) {
 	}
 
 	valid := []struct {
-		op    sqrl.Sqlizer
+		op    bsql.Sqlizer
 		sql   string
 		value string
 	}{
@@ -54,10 +54,10 @@ func TestInvalidJSON(t *testing.T) {
 }
 
 func ExampleJSONB() {
-	sql, args, err := sqrl.Insert("posts").
+	sql, args, err := bsql.Insert("posts").
 		Columns("content", "tags").
 		Values("Lorem Ipsum", pg.JSONB([]string{"foo", "bar"})).
-		PlaceholderFormat(sqrl.Dollar).
+		PlaceholderFormat(bsql.Dollar).
 		ToSql()
 
 	if err != nil {

@@ -1,7 +1,6 @@
-package sqrl
+package bsql
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -96,7 +95,6 @@ func TestSelectBuilderZeroOffsetLimit(t *testing.T) {
 	assert.Equal(t, expectedSql, sql)
 }
 
-
 func TestSelectBuilderFromSelect(t *testing.T) {
 	subQ := Select("c").From("d").Where(Eq{"i": 0})
 	b := Select("a", "b").FromSelect(subQ, "subq")
@@ -123,53 +121,6 @@ func TestSelectBuilderPlaceholders(t *testing.T) {
 
 	sql, _, _ = b.PlaceholderFormat(Dollar).ToSql()
 	assert.Equal(t, "SELECT test WHERE x = $1 AND y = $2", sql)
-}
-
-func TestSelectBuilderRunners(t *testing.T) {
-	db := &DBStub{}
-	b := Select("test").RunWith(db)
-
-	expectedSql := "SELECT test"
-
-	b.Exec()
-	assert.Equal(t, expectedSql, db.LastExecSql)
-
-	b.Query()
-	assert.Equal(t, expectedSql, db.LastQuerySql)
-
-	b.QueryRow()
-	assert.Equal(t, expectedSql, db.LastQueryRowSql)
-
-	b.ExecContext(context.TODO())
-	assert.Equal(t, expectedSql, db.LastQueryRowSql)
-
-	b.QueryContext(context.TODO())
-	assert.Equal(t, expectedSql, db.LastQuerySql)
-
-	b.QueryRowContext(context.TODO())
-	assert.Equal(t, expectedSql, db.LastQueryRowSql)
-
-	err := b.Scan()
-	assert.NoError(t, err)
-}
-
-func TestSelectBuilderNoRunner(t *testing.T) {
-	b := Select("test")
-
-	_, err := b.Exec()
-	assert.Equal(t, ErrRunnerNotSet, err)
-
-	_, err = b.Query()
-	assert.Equal(t, ErrRunnerNotSet, err)
-
-	_, err = b.ExecContext(context.TODO())
-	assert.Equal(t, ErrRunnerNotSet, err)
-
-	_, err = b.QueryContext(context.TODO())
-	assert.Equal(t, ErrRunnerNotSet, err)
-
-	err = b.Scan()
-	assert.Equal(t, ErrRunnerNotSet, err)
 }
 
 func TestSelectBuilderSimpleJoin(t *testing.T) {

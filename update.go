@@ -1,9 +1,7 @@
-package sqrl
+package bsql
 
 import (
 	"bytes"
-	"context"
-	"database/sql"
 	"fmt"
 	"sort"
 	"strconv"
@@ -41,60 +39,6 @@ type UpdateBuilder struct {
 // NewUpdateBuilder creates new instance of UpdateBuilder
 func NewUpdateBuilder(b StatementBuilderType) *UpdateBuilder {
 	return &UpdateBuilder{StatementBuilderType: b}
-}
-
-// RunWith sets a Runner (like database/sql.DB) to be used with e.g. Exec.
-func (b *UpdateBuilder) RunWith(runner BaseRunner) *UpdateBuilder {
-	b.runWith = wrapRunner(runner)
-	return b
-}
-
-// Exec builds and Execs the query with the Runner set by RunWith.
-func (b *UpdateBuilder) Exec() (sql.Result, error) {
-	return b.ExecContext(context.Background())
-}
-
-// ExecContext builds and Execs the query with the Runner set by RunWith using given context.
-func (b *UpdateBuilder) ExecContext(ctx context.Context) (sql.Result, error) {
-	if b.runWith == nil {
-		return nil, ErrRunnerNotSet
-	}
-	return ExecWithContext(ctx, b.runWith, b)
-}
-
-// Query builds and Querys the query with the Runner set by RunWith.
-func (b *UpdateBuilder) Query() (*sql.Rows, error) {
-	return b.QueryContext(context.Background())
-}
-
-// QueryContext builds and runs the query using given context and Query command.
-func (b *UpdateBuilder) QueryContext(ctx context.Context) (*sql.Rows, error) {
-	if b.runWith == nil {
-		return nil, ErrRunnerNotSet
-	}
-	return QueryWithContext(ctx, b.runWith, b)
-}
-
-// QueryRow builds and QueryRows the query with the Runner set by RunWith.
-func (b *UpdateBuilder) QueryRow() RowScanner {
-	return b.QueryRowContext(context.Background())
-}
-
-// QueryRowContext builds and runs the query using given context.
-func (b *UpdateBuilder) QueryRowContext(ctx context.Context) RowScanner {
-	if b.runWith == nil {
-		return &Row{err: ErrRunnerNotSet}
-	}
-	queryRower, ok := b.runWith.(QueryRowerContext)
-	if !ok {
-		return &Row{err: ErrRunnerNotQueryRunnerContext}
-	}
-	return QueryRowWithContext(ctx, queryRower, b)
-}
-
-// Scan is a shortcut for QueryRow().Scan.
-func (b *UpdateBuilder) Scan(dest ...interface{}) error {
-	return b.QueryRow().Scan(dest...)
 }
 
 // PlaceholderFormat sets PlaceholderFormat (e.g. Question or Dollar) for the

@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/elgris/sqrl"
-	"github.com/elgris/sqrl/pg"
+	"github.com/langbox/bsql"
+	"github.com/langbox/bsql/pg"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestValidArray(t *testing.T) {
 	valid := []struct {
-		op    sqrl.Sqlizer
+		op    bsql.Sqlizer
 		sql   string
 		value string
 	}{
@@ -39,7 +39,7 @@ func TestValidArray(t *testing.T) {
 }
 
 func TestInvalidArray(t *testing.T) {
-	invalid := []sqrl.Sqlizer{
+	invalid := []bsql.Sqlizer{
 		pg.Array([]struct{}{{}}),
 		pg.Array(42),
 		pg.Array("foo"),
@@ -55,10 +55,10 @@ func TestInvalidArray(t *testing.T) {
 }
 
 func ExampleArray() {
-	sql, args, err := sqrl.Insert("posts").
+	sql, args, err := bsql.Insert("posts").
 		Columns("content", "tags").
 		Values("Lorem Ipsum", pg.Array([]string{"foo", "bar"})).
-		PlaceholderFormat(sqrl.Dollar).
+		PlaceholderFormat(bsql.Dollar).
 		ToSql()
 
 	if err != nil {

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/elgris/sqrl"
+	"github.com/langbox/bsql"
 )
 
 // Array converts value into Postgres Array
@@ -15,7 +15,7 @@ import (
 // Valid values are slices or arrays of arbitrary depth
 // with elements of type string, int, uint and float elements of any bit size
 // Example: []int, [][]uint16, [2][2]int, []string
-func Array(arr interface{}) sqrl.Sqlizer {
+func Array(arr interface{}) bsql.Sqlizer {
 	return array{arr}
 }
 

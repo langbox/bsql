@@ -1,4 +1,4 @@
-package sqrl
+package bsql
 
 import "io"
 

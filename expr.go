@@ -1,4 +1,4 @@
-package sqrl
+package bsql
 
 import (
 	"bytes"
@@ -101,10 +101,10 @@ type Eq map[string]interface{}
 
 func (eq Eq) toSql(useNotOpr bool) (sql string, args []interface{}, err error) {
 	var (
-		exprs      []string
-		equalOpr   = "="
-		inOpr      = "IN"
-		nullOpr    = "IS"
+		exprs       []string
+		equalOpr    = "="
+		inOpr       = "IN"
+		nullOpr     = "IS"
 		inEmptyExpr = "(1=0)" // Portable FALSE
 	)
 

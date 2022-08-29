@@ -1,9 +1,7 @@
-package sqrl
+package bsql
 
 import (
 	"bytes"
-	"context"
-	"database/sql"
 	"fmt"
 	"strconv"
 	"strings"
@@ -35,59 +33,6 @@ type SelectBuilder struct {
 // NewSelectBuilder creates new instance of SelectBuilder
 func NewSelectBuilder(b StatementBuilderType) *SelectBuilder {
 	return &SelectBuilder{StatementBuilderType: b}
-}
-
-// RunWith sets a Runner (like database/sql.DB) to be used with e.g. Exec.
-func (b *SelectBuilder) RunWith(runner BaseRunner) *SelectBuilder {
-	b.runWith = wrapRunner(runner)
-	return b
-}
-
-// Exec builds and Execs the query with the Runner set by RunWith.
-func (b *SelectBuilder) Exec() (sql.Result, error) {
-	return b.ExecContext(context.Background())
-}
-
-// ExecContext builds and Execs the query with the Runner set by RunWith using given context.
-func (b *SelectBuilder) ExecContext(ctx context.Context) (sql.Result, error) {
-	if b.runWith == nil {
-		return nil, ErrRunnerNotSet
-	}
-	return ExecWithContext(ctx, b.runWith, b)
-}
-
-// Query builds and Querys the query with the Runner set by RunWith.
-func (b *SelectBuilder) Query() (*sql.Rows, error) {
-	return b.QueryContext(context.Background())
-}
-
-// QueryContext builds and Querys the query with the Runner set by RunWith in given context.
-func (b *SelectBuilder) QueryContext(ctx context.Context) (*sql.Rows, error) {
-	if b.runWith == nil {
-		return nil, ErrRunnerNotSet
-	}
-	return QueryWithContext(ctx, b.runWith, b)
-}
-
-// QueryRow builds and QueryRows the query with the Runner set by RunWith.
-func (b *SelectBuilder) QueryRow() RowScanner {
-	return b.QueryRowContext(context.Background())
-}
-
-func (b *SelectBuilder) QueryRowContext(ctx context.Context) RowScanner {
-	if b.runWith == nil {
-		return &Row{err: ErrRunnerNotSet}
-	}
-	queryRower, ok := b.runWith.(QueryRowerContext)
-	if !ok {
-		return &Row{err: ErrRunnerNotQueryRunnerContext}
-	}
-	return QueryRowWithContext(ctx, queryRower, b)
-}
-
-// Scan is a shortcut for QueryRow().Scan.
-func (b *SelectBuilder) Scan(dest ...interface{}) error {
-	return b.QueryRow().Scan(dest...)
 }
 
 // PlaceholderFormat sets PlaceholderFormat (e.g. Question or Dollar) for the
